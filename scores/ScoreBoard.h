@@ -1,7 +1,6 @@
 #pragma once
 // ScoreBoard.h
 // Registro de puntajes con persistencia en archivo y ordenamiento
-// seleccionable entre insertionSort y mergeSort (definidos en
 #include <string>
 #include "../sorting/SortAlgorithms.h"
 
@@ -25,8 +24,7 @@ public:
     // Guarda el estado actual en el archivo
     void guardarEnArchivo() const;
 
-    // Calcula la formula de puntos segun cuantas lineas se limpiaron
-    // de una sola vez (0 a 4).
+    // Calcula la formula de puntos 
     static int puntosPorLineas(int lineasLimpiadas);
 
     // Intenta agregar un nuevo puntaje. Si entra entre los mejores
