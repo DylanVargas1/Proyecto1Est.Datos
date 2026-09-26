@@ -32,6 +32,9 @@ void GameEngine::iniciarNuevaPartida() {
 	puntajeYaGuardadoEstaPartida = false;
 	nombreJugadorEnProgreso.clear();
 	huboEventoReciente_ = false;
+	esperandoFlash = false;
+	tiempoFlashRestante = 0.0f;
+	cantidadFilasFlash = 0;
 	
 	hold = HoldStack();
 	colaPiezas.asegurarPiezasVisibles(3);
@@ -92,7 +95,7 @@ void GameEngine::registrarAccion(TipoAccion tipo, int filaAntes, int columnaAnte
 }
 
 void GameEngine::moverIzquierda() {
-	if (estado != GameState::JUGANDO) return;
+	if (estado != GameState::JUGANDO || esperandoFlash) return;
 	int filaAntes = piezaActual->filaBase, colAntes = piezaActual->columnaBase, oriAntes = piezaActual->orientacion;
 	piezaActual->columnaBase -= 1;
 	if (colisionaEn(*piezaActual)) {
@@ -104,7 +107,7 @@ void GameEngine::moverIzquierda() {
 }
 
 void GameEngine::moverDerecha() {
-	if (estado != GameState::JUGANDO) return;
+	if (estado != GameState::JUGANDO || esperandoFlash) return;
 	int filaAntes = piezaActual->filaBase, colAntes = piezaActual->columnaBase, oriAntes = piezaActual->orientacion;
 	piezaActual->columnaBase += 1;
 	if (colisionaEn(*piezaActual)) {
@@ -116,7 +119,7 @@ void GameEngine::moverDerecha() {
 }
 
 void GameEngine::rotar() {
-	if (estado != GameState::JUGANDO) return;
+	if (estado != GameState::JUGANDO || esperandoFlash) return;
 	int filaAntes = piezaActual->filaBase, colAntes = piezaActual->columnaBase, oriAntes = piezaActual->orientacion;
 	
 	int orientacionCandidata = (piezaActual->orientacion + 1) % 4;
@@ -136,7 +139,7 @@ void GameEngine::bajarSuave() {
 }
 
 void GameEngine::descenderUnaFila(bool esAccionDelJugador) {
-	if (estado != GameState::JUGANDO) return;
+	if (estado != GameState::JUGANDO || esperandoFlash) return;
 	int filaAntes = piezaActual->filaBase, colAntes = piezaActual->columnaBase, oriAntes = piezaActual->orientacion;
 	piezaActual->filaBase += 1;
 	if (colisionaEn(*piezaActual)) {
@@ -151,7 +154,7 @@ void GameEngine::descenderUnaFila(bool esAccionDelJugador) {
 }
 
 void GameEngine::bajarForzado() {
-	if (estado != GameState::JUGANDO) return;
+	if (estado != GameState::JUGANDO || esperandoFlash) return;
 	int filaAntes = piezaActual->filaBase, colAntes = piezaActual->columnaBase, oriAntes = piezaActual->orientacion;
 	while (!colisionaEn(*piezaActual)) {
 		piezaActual->filaBase += 1;
@@ -179,18 +182,45 @@ void GameEngine::fijarPiezaAlTablero() {
 		piezaEspecialActiva = false;
 	}
 	
+	// Se detectan las filas completas ANTES de eliminarlas, para poder
+	// mostrar un breve parpadeo (animacion de limpieza de linea) antes de
+	// que desaparezcan de verdad.
+	cantidadFilasFlash = 0;
+	for (int i = 0; i < TABLERO_FILAS && cantidadFilasFlash < MAX_FILAS_FLASH; ++i) {
+		NodoFila* fila = tableroJuego->obtenerFila(i);
+		if (fila != nullptr && tableroJuego->filaCompleta(fila)) {
+			filasEnFlash[cantidadFilasFlash++] = i;
+		}
+	}
+	
+	registrarAccion(TipoAccion::COLOCAR, piezaActual->filaBase, piezaActual->columnaBase,
+					piezaActual->orientacion, cantidadFilasFlash);
+	
+	if (cantidadFilasFlash > 0) {
+		// La limpieza real, el puntaje y la siguiente pieza se aplican en
+		// finalizarLimpiezaFilas(), llamado desde actualizar() cuando
+		// termina el tiempo de parpadeo. Mientras tanto el jugador no
+		// puede mover/rotar/hold (ver los guard de esperandoFlash).
+		esperandoFlash = true;
+		tiempoFlashRestante = DURACION_FLASH_LINEA;
+	} else {
+		generarNuevaPiezaActiva();
+	}
+}
+
+void GameEngine::finalizarLimpiezaFilas() {
 	int filasLimpiadas = tableroJuego->limpiarFilasCompletas();
 	lineasAcumuladas += filasLimpiadas;
 	puntaje += ScoreBoard::puntosPorLineas(filasLimpiadas);
 	
-	registrarAccion(TipoAccion::COLOCAR, piezaActual->filaBase, piezaActual->columnaBase,
-					piezaActual->orientacion, filasLimpiadas);
+	esperandoFlash = false;
+	cantidadFilasFlash = 0;
 	
 	generarNuevaPiezaActiva();
 }
 
 void GameEngine::enviarAHold() {
-	if (estado != GameState::JUGANDO || holdUsadoEsteTurno) return;
+	if (estado != GameState::JUGANDO || holdUsadoEsteTurno || esperandoFlash) return;
 	
 	int filaAntes = piezaActual->filaBase, colAntes = piezaActual->columnaBase, oriAntes = piezaActual->orientacion;
 	PieceType tipoActual = piezaActual->tipo();
@@ -216,7 +246,7 @@ void GameEngine::enviarAHold() {
 }
 
 void GameEngine::deshacerUltimoMovimiento() {
-	if (estado != GameState::JUGANDO) return;
+	if (estado != GameState::JUGANDO || esperandoFlash) return;
 	
 	// Limite duro: no se puede deshacer mas alla del momento en que
 	// aparecio la pieza ACTUAL.
@@ -232,7 +262,7 @@ void GameEngine::deshacerUltimoMovimiento() {
 }
 
 void GameEngine::rehacerMovimiento() {
-	if (estado != GameState::JUGANDO) return;
+	if (estado != GameState::JUGANDO || esperandoFlash) return;
 	if (movimientosDisponiblesParaDeshacer >= movimientosTotalesEstaPieza) return;
 	
 	AccionRecord accion;
@@ -271,6 +301,17 @@ void GameEngine::actualizar(float deltaSegundos) {
 	while (colaEventos.hayEventoListo(tiempoPartidaSegundos)) {
 		GameEvent evento = colaEventos.extraerFrente();
 		aplicarEvento(evento);
+	}
+	
+	if (esperandoFlash) {
+		// Mientras dura el parpadeo de las filas completas, se congela
+		// la gravedad y no se genera pieza nueva.
+		tiempoFlashRestante -= deltaSegundos;
+		if (tiempoFlashRestante <= 0.0f) {
+			finalizarLimpiezaFilas();
+		}
+		colaPiezas.asegurarPiezasVisibles(3);
+		return;
 	}
 	
 	acumuladorCaida += deltaSegundos;
@@ -377,4 +418,10 @@ void GameEngine::confirmarNombre() {
 	std::string nombreFinal = nombreJugadorEnProgreso.empty() ? "Jugador" : nombreJugadorEnProgreso;
 	guardarPuntajeFinal(nombreFinal); // aqui SI se persiste de verdad en el archivo
 	estado = GameState::GAME_OVER;
+}
+
+float GameEngine::progresoFlash() const {
+	if (!esperandoFlash) return 0.0f;
+	float p = 1.0f - (tiempoFlashRestante / DURACION_FLASH_LINEA);
+	return std::max(0.0f, std::min(p, 1.0f));
 }

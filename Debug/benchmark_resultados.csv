@@ -1,0 +1,9 @@
+tamano,algoritmo,tiempo_ms
+10,insertion,0.000143007
+10,merge,0.000405579
+100,insertion,0.00706238
+100,merge,0.00474371
+1000,insertion,0.950211
+1000,merge,0.120244
+10000,insertion,74.179
+10000,merge,2.27969

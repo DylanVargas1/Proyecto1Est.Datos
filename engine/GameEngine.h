@@ -51,6 +51,15 @@ public:
 	int pasoReplayActual() const { return indiceReplayActual; }
 	int totalPasosReplay() const { return historialMovimientos.totalMovimientos(); }
 	
+	// --- Animacion de limpieza de linea (solo lectura, no afecta la logica) ---
+	// true mientras hay filas completas "parpadeando" antes de eliminarse.
+	bool hayFlashDeLineasActivo() const { return esperandoFlash; }
+	int cantidadFilasEnFlash() const { return cantidadFilasFlash; }
+	int filaEnFlash(int indice) const { return filasEnFlash[indice]; }
+	// Progreso (0..1) del parpadeo, para que el render decida cuando
+	// mostrar/ocultar el destello (efecto de titileo).
+	float progresoFlash() const;
+	
 	void establecerAlgoritmoOrdenamiento(TipoOrdenamiento algoritmo) { algoritmoSeleccionado = algoritmo; }
 	TipoOrdenamiento algoritmoActual() const { return algoritmoSeleccionado; }
 	void guardarPuntajeFinal(const std::string& nombreJugador);
@@ -61,8 +70,7 @@ public:
 	TipoEvento tipoUltimoEvento() const { return tipoEventoReciente_; }
 	float tiempoUltimoEvento() const { return tiempoEventoReciente_; }
 	
-	// Corresponde a cuantas piezas siguientes se deben mostrar ahora mismo (normalmente
-	// 3; baja a 1 mientras el evento REDUCIR_VISIBILIDAD_COLA esta activo).
+	// Corresponde a cuantas piezas siguientes se deben mostrar ahora mismo 
 	int visibilidadCola() const { return visibilidadColaActual; }
 	
 	void agregarCaracterNombre(char c);
@@ -104,9 +112,18 @@ private:
 		int movimientosDisponiblesParaDeshacer;
 		int movimientosTotalesEstaPieza;
 		
+		// --- Parpadeo de filas completas antes de eliminarlas ---
+		static const int MAX_FILAS_FLASH = 4;
+		static constexpr float DURACION_FLASH_LINEA = 0.35f;
+		bool esperandoFlash = false;
+		float tiempoFlashRestante = 0.0f;
+		int filasEnFlash[MAX_FILAS_FLASH] = {0, 0, 0, 0};
+		int cantidadFilasFlash = 0;
+		
 		void generarNuevaPiezaActiva();
 		bool colisionaEn(const Tetromino& pieza) const;
 		void fijarPiezaAlTablero();
+		void finalizarLimpiezaFilas();
 		void programarEventosIniciales();
 		void aplicarEvento(const GameEvent& evento);
 		void registrarAccion(TipoAccion tipo, int filaAntes, int columnaAntes, int orientacionAntes,

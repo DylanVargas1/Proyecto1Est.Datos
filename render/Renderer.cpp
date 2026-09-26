@@ -157,6 +157,22 @@ void Renderer::dibujarTablero(const GameEngine& motor) {
 			ventana.draw(celda);
 		}
 	}
+	
+	// --- Animacion de limpieza de linea: parpadeo blanco sobre las
+	// filas completas mientras el motor espera antes de eliminarlas ---
+	if (motor.hayFlashDeLineasActivo()) {
+		float progreso = motor.progresoFlash(); // 0..1
+		bool visible = (static_cast<int>(progreso * 8.0f) % 2) == 0;
+		if (visible) {
+			for (int i = 0; i < motor.cantidadFilasEnFlash(); ++i) {
+				int fila = motor.filaEnFlash(i);
+				sf::RectangleShape destello(sf::Vector2f(TABLERO_COLUMNAS * TAMANO_CELDA - 2, TAMANO_CELDA - 2));
+				destello.setPosition(OFFSET_X_TABLERO + 1, OFFSET_Y_TABLERO + fila * TAMANO_CELDA + 1);
+				destello.setFillColor(sf::Color::White);
+				ventana.draw(destello);
+			}
+		}
+	}
 }
 
 void Renderer::dibujarPiezaActiva(const GameEngine& motor) {
@@ -282,7 +298,7 @@ void Renderer::dibujarHud(const GameEngine& motor) {
 }
 
 void Renderer::dibujarAyuda() {
-
+	
 	sf::RectangleShape fondo(sf::Vector2f(520, 380));
 	fondo.setPosition(150, 190);
 	fondo.setFillColor(sf::Color(15, 16, 20, 240));
