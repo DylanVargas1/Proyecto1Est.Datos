@@ -42,6 +42,8 @@ private:
 	std::string nombreEvento(TipoEvento evento) const;
 	
 	void dibujarTexto(const std::string& texto, float x, float y, unsigned tamano, sf::Color color);
+	void dibujarTextoCentrado(const std::string& texto, float centroX, float y, unsigned tamano, sf::Color color);
+	float anchoTexto(const std::string& texto, unsigned tamano) const;
 	void dibujarPiezaEnMiniatura(PieceType tipo, float x, float y);
 	
 	bool mostrarTablaPuntajes; // se activa con T en el menu de inicio

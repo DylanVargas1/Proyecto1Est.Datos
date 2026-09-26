@@ -36,6 +36,20 @@ void Renderer::dibujarTexto(const std::string& texto, float x, float y, unsigned
 	ventana.draw(t);
 }
 
+float Renderer::anchoTexto(const std::string& texto, unsigned tamano) const {
+	if (!fuenteCargada) return 0.0f;
+	sf::Text t;
+	t.setFont(fuente);
+	t.setString(texto);
+	t.setCharacterSize(tamano);
+	return t.getLocalBounds().width;
+}
+
+void Renderer::dibujarTextoCentrado(const std::string& texto, float centroX, float y, unsigned tamano, sf::Color color) {
+	float mitadAncho = anchoTexto(texto, tamano) / 2.0f;
+	dibujarTexto(texto, centroX - mitadAncho, y, tamano, color);
+}
+
 sf::Color Renderer::colorParaTipo(PieceType tipo) const {
 	switch (tipo) {
 	case PieceType::I: return sf::Color(90, 200, 220);
@@ -322,18 +336,45 @@ void Renderer::dibujarAyuda() {
 }
 
 void Renderer::dibujarPantallaInicio(const GameEngine& motor) {
-	dibujarTexto("TETRIS", 320, 170, 34, COLOR_ACENTO);
-	dibujarTexto("EIF207 - Estructuras de Datos", 300, 215, 14, COLOR_TEXTO_TENUE);
+	const float centroX = 410.0f; // ventana de 820 de ancho
 	
-	dibujarTexto("ENTER : iniciar partida", 300, 280, 16, COLOR_TEXTO);
+	// Panel de fondo: le da mas cuerpo a la pantalla en vez de texto suelto
+	// flotando sobre el fondo liso.
+	sf::RectangleShape panel(sf::Vector2f(560, 470));
+	panel.setPosition(centroX - 280, 135);
+	panel.setFillColor(sf::Color(30, 33, 41, 235));
+	panel.setOutlineColor(COLOR_ACENTO);
+	panel.setOutlineThickness(2);
+	ventana.draw(panel);
+	
+	dibujarTextoCentrado("TETRIS", centroX, 165, 42, COLOR_ACENTO);
+	
+	// Linea de acento bajo el titulo, a modo de separador
+	float anchoLinea = 150;
+	sf::RectangleShape lineaTitulo(sf::Vector2f(anchoLinea, 3));
+	lineaTitulo.setPosition(centroX - anchoLinea / 2.0f, 224);
+	lineaTitulo.setFillColor(COLOR_ACENTO);
+	ventana.draw(lineaTitulo);
+	
+	dibujarTextoCentrado("ENTER : iniciar partida", centroX, 260, 18, COLOR_TEXTO);
+	
+	// --- Caja del algoritmo de ordenamiento de puntajes ---
+	sf::RectangleShape cajaAlgoritmo(sf::Vector2f(480, 100));
+	cajaAlgoritmo.setPosition(centroX - 240, 320);
+	cajaAlgoritmo.setFillColor(sf::Color(21, 23, 29, 255));
+	cajaAlgoritmo.setOutlineColor(COLOR_ACENTO);
+	cajaAlgoritmo.setOutlineThickness(1);
+	ventana.draw(cajaAlgoritmo);
 	
 	std::ostringstream oss;
 	oss << "Algoritmo para ordenar puntajes: " << nombreAlgoritmo(motor.algoritmoActual());
-	dibujarTexto(oss.str(), 300, 330, 13, COLOR_TEXTO);
-	dibujarTexto("(presiona 1 para Insertion Sort, 2 para Merge Sort)", 300, 352, 12, COLOR_TEXTO_TENUE);
+	dibujarTextoCentrado(oss.str(), centroX, 334, 13, COLOR_TEXTO);
+	dibujarTextoCentrado("(presiona 1 para Insertion Sort, 2 para Merge Sort)", centroX, 357, 12, COLOR_TEXTO);
+	dibujarTextoCentrado("No notaras diferencia en el juego: ambos ordenan igual,", centroX, 382, 11, COLOR_ACENTO);
+	dibujarTextoCentrado("solo cambia el algoritmo usado por dentro", centroX, 398, 11, COLOR_ACENTO);
 	
-	dibujarTexto("T : ver mejores puntajes", 300, 400, 13, COLOR_TEXTO_TENUE);
-	dibujarTexto("H : ver ayuda de todos los controles", 300, 422, 13, COLOR_TEXTO_TENUE);
+	dibujarTextoCentrado("T : ver mejores puntajes", centroX, 460, 13, COLOR_TEXTO);
+	dibujarTextoCentrado("H : ver ayuda de todos los controles", centroX, 482, 13, COLOR_TEXTO);
 	
 	if (mostrarTablaPuntajes) dibujarPantallaTablaPuntajes(motor);
 }
@@ -417,19 +458,25 @@ void Renderer::dibujarPantallaGameOver(const GameEngine& motor) {
 }
 
 void Renderer::dibujarControlesReplay(const GameEngine& motor) {
-	sf::RectangleShape fondo(sf::Vector2f(TABLERO_COLUMNAS * TAMANO_CELDA, 70));
+	// Antes la caja media lo mismo que el tablero (280px) y el texto de controles
+	// se salia del recuadro. Ahora la caja usa casi todo el ancho de la ventana
+	// y crece un poco en alto para que todo el texto quede adentro.
+	float anchoCaja = ventana.getSize().x - (OFFSET_X_TABLERO * 2);
+	float altoCaja = 80;
+	
+	sf::RectangleShape fondo(sf::Vector2f(anchoCaja, altoCaja));
 	fondo.setPosition(OFFSET_X_TABLERO, OFFSET_Y_TABLERO + TABLERO_FILAS * TAMANO_CELDA + 15);
 	fondo.setFillColor(sf::Color(15, 16, 20, 220));
 	fondo.setOutlineColor(COLOR_ACENTO);
 	fondo.setOutlineThickness(1);
 	ventana.draw(fondo);
 	
-	float x = OFFSET_X_TABLERO + 10;
-	float y = OFFSET_Y_TABLERO + TABLERO_FILAS * TAMANO_CELDA + 25;
+	float x = OFFSET_X_TABLERO + 12;
+	float y = OFFSET_Y_TABLERO + TABLERO_FILAS * TAMANO_CELDA + 27;
 	std::ostringstream oss;
 	oss << "REPRODUCIENDO REPLAY -- paso " << motor.pasoReplayActual() << " / " << motor.totalPasosReplay();
-	dibujarTexto(oss.str(), x, y, 14, COLOR_ACENTO);
-	dibujarTexto("<- retroceder     -> avanzar     ENTER: nueva partida     ESC: menu", x, y + 26, 12, COLOR_TEXTO);
+	dibujarTexto(oss.str(), x, y, 15, COLOR_ACENTO);
+	dibujarTexto("<- retroceder     -> avanzar     ENTER: nueva partida     ESC: menu", x, y + 32, 13, COLOR_TEXTO);
 }
 
 void Renderer::dibujarFrame(const GameEngine& motor) {
@@ -438,6 +485,7 @@ void Renderer::dibujarFrame(const GameEngine& motor) {
 	switch (motor.estadoActual()) {
 	case GameState::MENU_INICIO:
 		dibujarPantallaInicio(motor);
+	if (mostrarAyuda) dibujarAyuda();
 	break;
 	case GameState::JUGANDO:
 		dibujarTablero(motor);
