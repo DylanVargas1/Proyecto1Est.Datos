@@ -1,0 +1,199 @@
+commit 01fabeeac5b140bce87483426075a18e34b28055
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-26
+
+    eliminacion informe duplicado
+
+ Informe_Proyecto1_EIF207_Vargas_Azofeifa.docx | Bin 178894 -> 0 bytes
+ Proy1Est.Datos.zpr                            |  14 +++++++-------
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+commit 63edc1ddd2e728d904fff4bc3c20c5e0f9f80756
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-26
+
+    Arreglo en informe y en vistas, mejores puntajes
+
+ Informe_Proyecto1_EIF207_Vargas_Azofeifa.docx | Bin 151523 -> 178894 bytes
+ Informe_Proyecto1_Vargas_Azofeifa_Dylan.docx  | Bin 0 -> 178898 bytes
+ mejores_puntajes.txt                          |   5 +-
+ render/Renderer.cpp                           |  74 +++++++++++++++++++++-----
+ render/Renderer.h                             |   2 +
+ 5 files changed, 66 insertions(+), 15 deletions(-)
+
+commit 12d0067074b196200d09d3fbdd3af63ae1ca688c
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-26
+
+    ReadMe, informe, y efecto de cuando se limpia una fila
+
+ Debug/benchmark_resultados.csv                |   9 ++
+ Informe_Proyecto1_EIF207_Vargas_Azofeifa.docx | Bin 0 -> 151523 bytes
+ README.md                                     | 127 +++++++++++++++++++++++++-
+ engine/GameEngine.cpp                         |  67 ++++++++++++--
+ engine/GameEngine.h                           |  21 ++++-
+ main.cpp                                      |  60 ++++++++----
+ mejores_puntajes.txt                          |   4 +
+ render/Renderer.cpp                           |  18 +++-
+ sorting/Benchmark.cpp                         |  93 ++++++++++++-------
+ 9 files changed, 338 insertions(+), 61 deletions(-)
+
+commit 1f44f0b222c55a2734c8f90649de11e3e3e74d03
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-26
+
+    Main y configuracion de sfml en zinjal
+
+ Debug/libgcc_s_dw2-1.dll  | Bin 0 -> 838698 bytes
+ Debug/libmcfgthread-1.dll | Bin 0 -> 45390 bytes
+ Debug/libstdc++-6.dll     | Bin 0 -> 2451913 bytes
+ Debug/libwinpthread-1.dll | Bin 0 -> 88165 bytes
+ Debug/sfml-graphics-2.dll | Bin 0 -> 1433618 bytes
+ Debug/sfml-system-2.dll   | Bin 0 -> 112746 bytes
+ Debug/sfml-window-2.dll   | Bin 0 -> 266301 bytes
+ Proy1Est.Datos.zpr        |  18 +++++++++++-------
+ main.cpp                  |  23 +++++++++++++++++++++++
+ mejores_puntajes.txt      |   5 +++++
+ 10 files changed, 39 insertions(+), 7 deletions(-)
+
+commit aa428c9f2f1e11e7d5a7a9bf2ba5527dd3ba5f05
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-24
+
+    interfaz grafica SFML completa con pantallas y replay y las letras
+
+ Proy1Est.Datos.zpr  |    16 +-
+ render/FontData.h   | 37860 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ render/Renderer.cpp |   458 +
+ render/Renderer.h   |    48 +
+ 4 files changed, 38380 insertions(+), 2 deletions(-)
+
+commit 11fb1d3840ac60f27532b7d549e34530d64ea56b
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-23
+
+    Este es el motor del juego que integra todas las estructuras
+
+ Proy1Est.Datos.zpr    |  12 +-
+ engine/GameEngine.cpp | 380 ++++++++++++++++++++++++++++++++++++++++++++++++++
+ engine/GameEngine.h   | 115 +++++++++++++++
+ scores/ScoreBoard.h   |   4 +-
+ 4 files changed, 506 insertions(+), 5 deletions(-)
+
+commit 7cae7691af4e64463a8e660d0ac0087d328b61a9
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-22
+
+    tabla de mejores puntajes con persistencia y top-10
+
+ Proy1Est.Datos.zpr    | 24 +++++++++++++++--
+ scores/ScoreBoard.cpp | 73 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ scores/ScoreBoard.h   | 44 +++++++++++++++++++++++++++++++
+ 3 files changed, 139 insertions(+), 2 deletions(-)
+
+commit d32d03d0f974f6232afe472b8ccf7f4d5b2bb5ca
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-22
+
+    insertion sort y merge sort (Algoritmos de ordenamiento)
+
+ Proy1Est.Datos.zpr       | 12 ++++++++++--
+ sorting/Benchmark.cpp    | 39 ++++++++++++++++++++++++++++++++++++
+ sorting/Benchmark.h      | 13 ++++++++++++
+ sorting/SortAlgorithms.h | 51 ++++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 113 insertions(+), 2 deletions(-)
+
+commit 2f86a209c9c26a51610ba3f89093b4ee80bbed1c
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-21
+
+    cola de eventos programados ordenada por insercion
+
+ Proy1Est.Datos.zpr    | 12 ++++++++++--
+ events/EventQueue.cpp | 53 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ events/EventQueue.h   | 47 +++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 110 insertions(+), 2 deletions(-)
+
+commit 24a4ebc8a095db7a18682bd76b0502ea0af2d803
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-21
+
+    lista doblemente enlazada con deshacer/rehacer. Para el replay
+
+ Proy1Est.Datos.zpr  | 54 ++++++++++++++++++++++++++++++++++++
+ replay/MoveList.cpp | 79 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+ replay/MoveList.h   | 61 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 194 insertions(+)
+
+commit e72a8881db129fbf8226cd512182444e9bcc12a4
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-21
+
+    tablero representado como lista enlazada de 20 filas
+
+ board/Board.cpp | 123 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ board/Board.h   |  46 +++++++++++++++++++++
+ 2 files changed, 169 insertions(+)
+
+commit 95d8a9b53f128d4b9e95f0481b551838937c413e
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-20
+
+    pila propia de capacidad 1 para hold
+
+ pieces/HoldStack.cpp | 17 +++++++++++++++++
+ pieces/HoldStack.h   | 22 ++++++++++++++++++++++
+ 2 files changed, 39 insertions(+)
+
+commit c7ced42dac4762d77db9db31a59089a71b441d70
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-20
+
+    cola FIFO propia con generacion de bolsas de 7 unicas
+
+ pieces/PieceQueue.cpp | 65 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ pieces/PieceQueue.h   | 46 ++++++++++++++++++++++++++++++++++++
+ 2 files changed, 111 insertions(+)
+
+commit 8e767d7ba82750faeb29e2f7ef939207ece88260
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-20
+
+    modelo de tetrominos con 4 orientaciones precalculadas
+
+ pieces/Tetromino.cpp | 86 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+ pieces/Tetromino.h   | 29 ++++++++++++++++++
+ 2 files changed, 115 insertions(+)
+
+commit 135051ced7707fe16dcd086df5bc84fec151fc31
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-20
+
+    feat(core): tipos compartidos, generador aleatorio y timer
+
+ Proy1Est.Datos.zpr | 92 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ core/Random.cpp    | 13 ++++++++
+ core/Random.h      | 26 +++++++++++++++
+ core/Timer.cpp     | 15 +++++++++
+ core/Timer.h       | 27 ++++++++++++++++
+ core/Types.h       | 42 +++++++++++++++++++++++++
+ 6 files changed, 215 insertions(+)
+
+commit 247cb45d9993ba4973c89b5f9d37310ce6f64948
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-19
+
+    GitIgnore
+
+ .gitignore | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+commit 22f406d171b30d0671e0989fa3ab6210f38c9a31
+Author: DylanVargas1 <dylan.vargas.azofeifa@est.una.ac.cr>
+Date:   2026-09-19
+
+    Initial commit
+
+ .gitattributes | 2 ++
+ README.md      | 2 ++
+ 2 files changed, 4 insertions(+)
